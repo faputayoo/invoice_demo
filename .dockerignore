@@ -1,0 +1,10 @@
+.git
+.next
+node_modules
+data
+test-pdfs
+coverage
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
