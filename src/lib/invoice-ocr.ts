@@ -100,7 +100,12 @@ async function recognizeScreenshots(
 
 function buildLanguageCandidates(): OcrLanguageCandidate[] {
   const configured = process.env.INVOICE_OCR_LANGS?.trim();
-  const rawCandidates = configured ? [configured, "eng"] : ["eng", "chi_sim+eng"];
+  const rawCandidates = configured
+    ? configured
+        .split(",")
+        .map((candidate) => candidate.trim())
+        .filter(Boolean)
+    : ["eng", "chi_sim+eng"];
   const uniqueCandidates = Array.from(new Set(rawCandidates.filter(Boolean)));
 
   return uniqueCandidates.map((candidate) => ({
