@@ -1,5 +1,6 @@
 import { mkdir } from "node:fs/promises";
 
+import { loadPdfParse } from "@/lib/pdf-parse-runtime";
 import { getOcrCachePath } from "@/lib/runtime-config";
 
 const OCR_PAGE_LIMIT = 2;
@@ -41,7 +42,7 @@ export async function extractPdfTextWithOcr(buffer: Buffer): Promise<OcrAttempt[
 }
 
 async function renderPdfScreenshots(buffer: Buffer): Promise<Buffer[]> {
-  const { PDFParse } = await import("pdf-parse");
+  const { PDFParse } = await loadPdfParse();
   const parser = new PDFParse({ data: buffer });
 
   try {

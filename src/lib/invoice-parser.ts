@@ -7,6 +7,7 @@ import type {
   ParsedInvoiceOutcome,
 } from "@/lib/invoice-types";
 import { extractPdfTextWithOcr } from "@/lib/invoice-ocr";
+import { loadPdfParse } from "@/lib/pdf-parse-runtime";
 
 const BUYER_SECTION_PATTERN = /购买方(?:信息)?|buyer(?: information)?/i;
 const SELLER_SECTION_PATTERN = /销售方(?:信息)?|seller(?: information)?/i;
@@ -108,7 +109,7 @@ export async function parseInvoiceFile(
 }
 
 async function extractPdfText(buffer: Buffer): Promise<string> {
-  const { PDFParse } = await import("pdf-parse");
+  const { PDFParse } = await loadPdfParse();
   const parser = new PDFParse({ data: buffer });
 
   try {
