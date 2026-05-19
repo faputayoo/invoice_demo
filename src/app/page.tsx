@@ -8,13 +8,13 @@ export default function Home() {
       <section className="surface-card overflow-hidden rounded-[2rem] border px-6 py-8 sm:px-10 sm:py-12">
         <div className="grid gap-10 lg:grid-cols-[1.3fr_0.9fr] lg:items-end">
           <div className="space-y-6">
-            <p className="eyebrow">Invoice Ledger Demo</p>
+            <p className="eyebrow">票据清册</p>
             <div className="space-y-4">
               <h1 className="max-w-4xl text-4xl leading-tight sm:text-5xl lg:text-6xl">
                 上传电子发票 PDF，30 秒整理成 Excel。
               </h1>
               <p className="max-w-2xl text-lg leading-8 text-[var(--muted)] sm:text-xl">
-                这不是一个无限兜底的 OCR 平台，而是一个边界清楚、价值直接的票据整理工具：批量提取字段、标记疑似重复、汇总金额并导出标准台账。
+                把零散电子发票整理成清晰台账：自动提取字段、提示疑似重复、汇总金额，并导出标准 Excel。
               </p>
             </div>
 
@@ -25,7 +25,7 @@ export default function Home() {
               >
                 开始上传 PDF
               </Link>
-              <DemoJobButton label="先看示例结果" />
+              <DemoJobButton label="查看样例结果" />
             </div>
 
             <div className="flex flex-wrap gap-3 text-sm text-[var(--muted)]">
@@ -70,17 +70,17 @@ export default function Home() {
       <section className="grid gap-6 lg:grid-cols-[1fr_1fr]">
         <div className="surface-card rounded-[2rem] p-7">
           <p className="eyebrow">支持范围</p>
-          <h2 className="mt-3 text-3xl">第一版边界写死，售后才会轻。</h2>
+          <h2 className="mt-3 text-3xl">支持边界明确，处理结果更稳定。</h2>
           <div className="mt-6 space-y-3 text-base leading-8 text-[var(--muted)]">
-            <p>支持：标准电子发票 PDF、图片版 PDF 的 OCR fallback、批量导出 Excel。</p>
-            <p>暂不支持：手机拍照图片直传、手写票据、国外 invoice、任意自定义模板。</p>
-            <p>文本层清晰的 PDF 会优先走规则提取；只有失败时才会触发 OCR，所以成本和稳定性还在可控范围内。</p>
+            <p>支持：标准电子发票 PDF、图片版 PDF 的 OCR 自动识别、批量导出 Excel。</p>
+            <p>暂不支持：手机拍照图片直传、手写票据、海外发票、自定义模板。</p>
+            <p>文本层清晰的 PDF 会优先走规则提取；只有必要时才会启用 OCR，因此处理更稳定。</p>
           </div>
         </div>
 
         <div className="surface-card rounded-[2rem] p-7">
           <p className="eyebrow">目标用户</p>
-          <h2 className="mt-3 text-3xl">你卖的不是 AI，是月底少做一轮重复劳动。</h2>
+          <h2 className="mt-3 text-3xl">适合先把零散票据整理成台账的人。</h2>
           <div className="mt-6 grid gap-3 text-base leading-8 text-[var(--muted)] sm:grid-cols-3">
             <div className="rounded-[1.5rem] border border-black/10 bg-white/65 p-4">
               <p className="font-semibold text-[var(--foreground)]">小商家老板</p>

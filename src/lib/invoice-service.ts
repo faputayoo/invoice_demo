@@ -17,7 +17,7 @@ export async function processUploadBatch(files: File[]): Promise<InvoiceJob> {
   }
 
   if (files.length > MAX_FILES_PER_BATCH) {
-    throw new Error(`当前 demo 单批最多处理 ${MAX_FILES_PER_BATCH} 张 PDF。`);
+    throw new Error(`当前单批最多处理 ${MAX_FILES_PER_BATCH} 张 PDF。`);
   }
 
   const jobId = await createJobId();

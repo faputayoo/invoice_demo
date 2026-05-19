@@ -22,7 +22,7 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "票据清册 Demo",
+  title: "票据清册",
   description: "把一堆电子发票 PDF，自动整理成可报销、可对账、可归档的 Excel。",
 };
 
@@ -46,10 +46,10 @@ export default function RootLayout({
                   票
                 </div>
                 <div>
-                  <p className="text-sm uppercase tracking-[0.28em] text-[var(--muted)]">
-                    Invoice Demo
+                  <p className="whitespace-nowrap text-sm tracking-[0.12em] text-[var(--muted)]">
+                    Invoice Ledger
                   </p>
-                  <p className="text-lg font-semibold text-[var(--foreground)]">
+                  <p className="whitespace-nowrap text-lg font-semibold text-[var(--foreground)]">
                     票据清册
                   </p>
                 </div>
@@ -57,10 +57,10 @@ export default function RootLayout({
 
               <nav className="flex items-center gap-2 text-sm font-medium text-[var(--foreground)] sm:gap-3">
                 <Link href="/upload" className="rounded-full px-4 py-2 transition hover:bg-black/5">
-                  上传页
+                  上传文件
                 </Link>
                 <Link href="/history" className="rounded-full px-4 py-2 transition hover:bg-black/5">
-                  历史页
+                  历史记录
                 </Link>
               </nav>
             </div>
@@ -68,8 +68,11 @@ export default function RootLayout({
 
           <main className="flex-1 py-8">{children}</main>
 
-          <footer className="mt-8 border-t border-black/10 py-6 text-sm text-[var(--muted)]">
-            当前版本已经可以部署上线，优先支持文本型中文电子发票 PDF；图片版 PDF 会自动尝试 OCR 补救，但手机拍照图片、国外 invoice 和复杂税务流程仍不在支持范围内。
+          <footer className="mt-10 border-t border-black/10 py-6 text-sm text-[var(--muted)]">
+            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+              <p className="font-medium text-[var(--foreground)]">票据清册</p>
+              <p>批量整理电子发票，导出可报销、可对账、可归档的标准台账。</p>
+            </div>
           </footer>
         </div>
       </body>

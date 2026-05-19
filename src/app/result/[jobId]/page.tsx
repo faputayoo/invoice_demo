@@ -31,10 +31,10 @@ export default async function ResultPage({
       <section className="surface-card rounded-[2rem] p-6 sm:p-8">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="eyebrow">Result</p>
-            <h1 className="mt-3 text-4xl sm:text-5xl">结果页</h1>
+            <p className="eyebrow">处理结果</p>
+            <h1 className="mt-3 text-4xl sm:text-5xl">本次处理结果</h1>
             <p className="mt-4 max-w-3xl text-lg leading-8 text-[var(--muted)]">
-              你现在看到的是本次批量整理的即时结果：识别多少、失败多少、哪些疑似重复、以及最终能导出的标准 Excel 台账。
+              本次上传的识别明细、重复提醒、失败项和导出入口都汇总在这里，处理完成后可以直接下载标准 Excel 台账。
             </p>
           </div>
 
@@ -74,7 +74,7 @@ export default async function ResultPage({
         <div className="surface-card overflow-hidden rounded-[2rem] p-6">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="eyebrow">表格预览</p>
+              <p className="eyebrow">识别明细</p>
               <h2 className="mt-2 text-3xl">标准发票台账</h2>
             </div>
             <span className="ink-chip rounded-full px-4 py-2 text-sm">
@@ -82,9 +82,10 @@ export default async function ResultPage({
             </span>
           </div>
 
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-[var(--muted)]">
-            <p>桌面端已加宽主表格；小屏幕可左右滑动查看更多列。</p>
-            <p className="number-tabular">共 {job.records.length} 条记录</p>
+          <div className="mt-4 flex justify-end">
+            <span className="ink-chip rounded-full px-4 py-2 text-sm number-tabular">
+              共 {job.records.length} 条记录
+            </span>
           </div>
 
           <div className="mt-6 overflow-x-auto pb-2">
@@ -177,7 +178,7 @@ export default async function ResultPage({
 
         <div className="space-y-6">
           <section className="surface-card rounded-[2rem] p-6">
-            <p className="eyebrow">异常提示</p>
+            <p className="eyebrow">重复提醒</p>
             <h2 className="mt-2 text-3xl">疑似重复票</h2>
             {duplicateRecords.length === 0 ? (
               <p className="mt-4 text-sm leading-7 text-[var(--muted)]">本次没有发现明显重复。</p>
@@ -196,8 +197,8 @@ export default async function ResultPage({
           </section>
 
           <section className="surface-card rounded-[2rem] p-6">
-            <p className="eyebrow">失败文件</p>
-            <h2 className="mt-2 text-3xl">单独重试</h2>
+            <p className="eyebrow">失败项</p>
+            <h2 className="mt-2 text-3xl">重新处理</h2>
             {job.failures.length === 0 ? (
               <p className="mt-4 text-sm leading-7 text-[var(--muted)]">本次没有失败文件。</p>
             ) : (

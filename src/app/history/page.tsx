@@ -16,10 +16,10 @@ export default async function HistoryPage() {
   return (
     <div className="space-y-6">
       <section className="space-y-3">
-        <p className="eyebrow">History</p>
-        <h1 className="text-4xl sm:text-5xl">历史页</h1>
+        <p className="eyebrow">处理历史</p>
+        <h1 className="text-4xl sm:text-5xl">历史记录</h1>
         <p className="max-w-2xl text-lg leading-8 text-[var(--muted)]">
-          当前部署会把每次处理结果保存到已配置的存储后端，你可以随时回来看预览或重新下载 Excel。
+          每次处理结果都会保存到当前配置的存储中，方便回看明细、下载 Excel 或继续处理异常文件。
         </p>
       </section>
 
@@ -27,13 +27,13 @@ export default async function HistoryPage() {
         <section className="surface-card rounded-[2rem] p-8">
           <h2 className="text-2xl">还没有处理记录</h2>
           <p className="mt-3 max-w-xl text-base leading-8 text-[var(--muted)]">
-            先去上传一批 PDF，或者先体验一次示例结果，历史页就会开始累计记录。
+            先上传一批 PDF，记录就会出现在这里；如果想先了解最终效果，也可以先打开一份样例结果。
           </p>
           <Link
             href="/upload"
             className="mt-6 inline-flex rounded-full bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[var(--accent-strong)]"
           >
-            去上传页
+            去上传文件
           </Link>
         </section>
       ) : (
@@ -43,7 +43,7 @@ export default async function HistoryPage() {
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p className="text-sm uppercase tracking-[0.2em] text-[var(--teal)]">
-                    {job.mode === "demo" ? "示例数据" : "真实上传"}
+                    {job.mode === "demo" ? "样例结果" : "本次上传"}
                   </p>
                   <h2 className="mt-2 text-2xl">{job.sourceLabel}</h2>
                 </div>
@@ -78,7 +78,7 @@ export default async function HistoryPage() {
                   href={`/result/${job.jobId}`}
                   className="rounded-full bg-[var(--teal)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0f5a61]"
                 >
-                  查看结果页
+                  查看详情
                 </Link>
                 <a
                   href={`/api/jobs/${job.jobId}/export`}

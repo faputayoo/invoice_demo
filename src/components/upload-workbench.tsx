@@ -110,7 +110,7 @@ export function UploadWorkbench({
     );
 
     if (incomingFiles.length === 0) {
-      setError("请上传 PDF 文件。当前 demo 支持图片版 PDF，但不支持 JPG/PNG 直接上传。");
+      setError("请上传 PDF 文件。当前仅支持 PDF，不支持 JPG 或 PNG 直接上传。");
       return;
     }
 
@@ -219,7 +219,7 @@ export function UploadWorkbench({
         ? "正在提取 PDF 文本层..."
         : progress < 95
           ? "正在整理字段并标记重复..."
-          : "即将跳转到结果页...";
+          : "即将打开处理结果...";
 
   return (
     <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
@@ -237,10 +237,10 @@ export function UploadWorkbench({
               : "border-black/15 bg-white/60"
           }`}
         >
-          <p className="eyebrow">上传工作台</p>
-          <h2 className="mt-3 text-3xl">把月底那一堆 PDF 先扔进来。</h2>
+          <p className="eyebrow">上传文件</p>
+          <h2 className="mt-3 text-3xl">把电子发票整理成一张清晰台账。</h2>
           <p className="mx-auto mt-4 max-w-xl text-base leading-8 text-[var(--muted)]">
-            当前 demo 会优先解析文本型电子发票 PDF；如果是图片版 PDF，会自动走 OCR fallback。支持拖拽上传，单批最多 {MAX_FILES_PER_BATCH} 张。
+            系统会优先解析文本型电子发票 PDF；图片版 PDF 会自动启用 OCR 识别。支持拖拽上传，单批最多 {MAX_FILES_PER_BATCH} 张。
           </p>
 
           <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
@@ -251,7 +251,7 @@ export function UploadWorkbench({
             >
               选择 PDF 文件
             </button>
-            <DemoJobButton label="没有现成 PDF，先看示例" />
+            <DemoJobButton label="查看样例结果" />
           </div>
 
           <input
@@ -283,7 +283,7 @@ export function UploadWorkbench({
               className="mt-3 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--teal)]"
             />
             <p className="mt-2 text-sm leading-7 text-[var(--muted)]">
-              这用于限制公开站点的真实上传入口，不影响你先查看示例结果。
+              用于控制公开站点的真实上传入口，样例结果仍可直接查看。
             </p>
           </div>
         ) : null}
@@ -291,7 +291,7 @@ export function UploadWorkbench({
         <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-[var(--muted)]">
           <span className="ink-chip rounded-full px-4 py-2">已选 {selectedFiles.length} 张</span>
           <span className="ink-chip rounded-full px-4 py-2">总大小 {totalSizeText}</span>
-          <span className="ink-chip rounded-full px-4 py-2">规则提取优先</span>
+          <span className="ink-chip rounded-full px-4 py-2">自动识别字段</span>
         </div>
 
         {selectedFiles.length > 0 ? (
@@ -370,7 +370,7 @@ export function UploadWorkbench({
 
       <aside className="space-y-6">
         <section className="surface-card rounded-[2rem] p-6">
-          <p className="eyebrow">结果页会告诉你什么</p>
+          <p className="eyebrow">处理完成后你会看到什么</p>
           <div className="mt-4 space-y-4 text-sm leading-7 text-[var(--muted)]">
             <p>成功识别多少张，失败多少张，疑似重复多少张。</p>
             <p>总金额合计和税额合计，直接用于报销和对账。</p>
@@ -379,11 +379,11 @@ export function UploadWorkbench({
         </section>
 
         <section className="surface-card rounded-[2rem] p-6">
-          <p className="eyebrow">当前演示边界</p>
+          <p className="eyebrow">处理范围</p>
           <ul className="mt-4 space-y-3 text-sm leading-7 text-[var(--muted)]">
-            <li>支持标准电子发票 PDF，也支持图片版 PDF 的 OCR 补救。</li>
-            <li>优先做规则提取，只在文本层不足时才触发 OCR。</li>
-            <li>历史记录可保存到本地磁盘或 Supabase，方便直接上线验证。</li>
+            <li>支持标准电子发票 PDF，也支持图片版 PDF 的 OCR 识别。</li>
+            <li>优先走规则提取，只在文本层不足时才启用 OCR。</li>
+            <li>处理记录会自动保存在当前配置的存储中，方便回看与导出。</li>
           </ul>
         </section>
       </aside>

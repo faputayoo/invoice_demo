@@ -8,7 +8,7 @@ type DemoJobButtonProps = {
 };
 
 export function DemoJobButton({
-  label = "体验示例结果",
+  label = "查看样例结果",
 }: DemoJobButtonProps) {
   const router = useRouter();
   const [error, setError] = useState("");
@@ -31,14 +31,14 @@ export function DemoJobButton({
         const payload = (await response.json().catch(() => null)) as
           | { error?: string }
           | null;
-        throw new Error(payload?.error ?? "示例数据创建失败。");
+        throw new Error(payload?.error ?? "样例结果创建失败。");
       }
 
       const payload = (await response.json()) as { jobId: string };
       router.push(`/result/${payload.jobId}`);
     } catch (caughtError) {
       const message =
-        caughtError instanceof Error ? caughtError.message : "示例数据创建失败。";
+        caughtError instanceof Error ? caughtError.message : "样例结果创建失败。";
       setError(message);
     }
   }
@@ -51,7 +51,7 @@ export function DemoJobButton({
         disabled={isPending}
         className="inline-flex items-center justify-center rounded-full border border-[var(--line)] bg-white/70 px-6 py-3 text-base font-semibold text-[var(--foreground)] transition hover:border-[var(--teal)] hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {isPending ? "正在生成示例结果..." : label}
+        {isPending ? "正在打开样例结果..." : label}
       </button>
       {error ? <p className="text-sm text-[var(--accent-strong)]">{error}</p> : null}
     </div>

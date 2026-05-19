@@ -83,7 +83,7 @@ export function buildDemoJob(jobId: string): InvoiceJob {
   const failures: InvoiceJob["failures"] = [
     {
       fileName: "扫描件-示例.pdf",
-      reason: "未检测到足够的文本层，当前 demo 仅支持可复制文本的电子发票 PDF。",
+      reason: "未检测到足够的文本层，当前仅支持可复制文本的电子发票 PDF。",
     },
   ];
 
@@ -91,7 +91,7 @@ export function buildDemoJob(jobId: string): InvoiceJob {
     jobId,
     createdAt: new Date().toISOString(),
     mode: "demo",
-    sourceLabel: "示例数据体验",
+    sourceLabel: "样例票据 4 条",
     records,
     failures,
     summary: buildJobSummary(records, failures),
