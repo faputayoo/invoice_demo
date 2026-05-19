@@ -12,6 +12,7 @@ import {
 } from "react";
 
 import { DemoJobButton } from "@/components/demo-job-button";
+import { trackEvent } from "@/lib/analytics";
 import { MAX_FILES_PER_BATCH } from "@/lib/demo-constants";
 import {
   getSavedUploadAccessKey,
@@ -159,6 +160,9 @@ export function UploadWorkbench({
 
   async function processBatch() {
     try {
+      const totalSizeMb = Number(
+        (selectedFiles.reduce((sum, file) => sum + file.size, 0) / 1024 / 1024).toFixed(2),
+      );
       const formData = new FormData();
       selectedFiles.forEach((file) => {
         formData.append("files", file);
@@ -166,6 +170,11 @@ export function UploadWorkbench({
       if (accessKeyRef.current.trim()) {
         formData.append("accessKey", accessKeyRef.current.trim());
       }
+
+      trackEvent("invoice_upload_started", {
+        file_count: selectedFiles.length,
+        total_size_mb: totalSizeMb,
+      });
 
       setProgress(8);
       startTimer();
@@ -185,12 +194,20 @@ export function UploadWorkbench({
       const payload = (await response.json()) as { jobId: string };
       stopTimer();
       setProgress(100);
+      trackEvent("invoice_upload_succeeded", {
+        file_count: selectedFiles.length,
+        total_size_mb: totalSizeMb,
+      });
       router.push(`/result/${payload.jobId}`);
     } catch (caughtError) {
       stopTimer();
       setProgress(0);
       const message =
         caughtError instanceof Error ? caughtError.message : "处理失败，请稍后再试。";
+      trackEvent("invoice_upload_failed", {
+        file_count: selectedFiles.length,
+        error_message: message.slice(0, 100),
+      });
       setError(message);
     }
   }

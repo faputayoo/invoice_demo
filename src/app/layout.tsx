@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { JetBrains_Mono, Source_Sans_3, Source_Serif_4 } from "next/font/google";
+
+import { GoogleAnalytics } from "@/components/google-analytics";
+
 import "./globals.css";
 
 const sourceSans = Source_Sans_3({
@@ -34,6 +37,7 @@ export default function RootLayout({
       className={`${sourceSans.variable} ${sourceSerif.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
+        <GoogleAnalytics />
         <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 pb-10 sm:px-6 lg:px-10">
           <header className="sticky top-0 z-30 pt-4">
             <div className="surface-card flex items-center justify-between rounded-full px-4 py-3 sm:px-6">

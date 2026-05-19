@@ -98,6 +98,7 @@ npm run dev
 
 - `INVOICE_STORAGE_DRIVER`：`local` 或 `supabase`
 - `INVOICE_LOCAL_DATA_ROOT`：本地磁盘模式的数据根目录
+- `NEXT_PUBLIC_GA_MEASUREMENT_ID`：Google Analytics 4 的站点 ID，填了就会自动统计访问量和上传事件
 - `INVOICE_UPLOAD_ACCESS_KEY`：开启后，真实上传和失败重试都需要口令
 - `INVOICE_OCR_LANGS`：自定义 OCR 语言，默认先尝试 `eng`，再尝试 `chi_sim+eng`
 - `INVOICE_OCR_CACHE_PATH`：自定义 OCR 语言包缓存目录
@@ -135,3 +136,21 @@ docker run --rm -p 3000:3000 \
 1. `Vercel + Supabase`：前端上线最快，但更适合小批量演示。
 2. `Railway/Render/Fly + Docker + 持久卷`：最适合当前这版 OCR + 批量上传 MVP。
 3. `VPS + Docker + Nginx`：长期成本最低，但需要自己处理运维。
+
+## 访问分析
+
+当前仓库已经内置了 Google Analytics 4 接入位，这是现在成本最低的方案之一：
+
+- Google Analytics 4 本身免费
+- 不增加 Railway 的额外服务费用
+- 默认会统计页面访问
+- 上传流程会额外记录 3 个事件：`invoice_upload_started`、`invoice_upload_succeeded`、`invoice_upload_failed`
+
+启用方式：
+
+1. 去 Google Analytics 创建一个 Web Data Stream
+2. 拿到 Measurement ID，格式通常是 `G-XXXXXXXXXX`
+3. 在 Railway 或本地环境变量中配置 `NEXT_PUBLIC_GA_MEASUREMENT_ID`
+4. 重新部署
+
+如果这个变量为空，分析脚本不会加载。
