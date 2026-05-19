@@ -62,8 +62,8 @@ export function GoogleAnalytics() {
     }
 
     window.dataLayer = window.dataLayer || [];
-    window.gtag = (...args: unknown[]) => {
-      window.dataLayer.push(args);
+    window.gtag = function gtag() {
+      window.dataLayer.push(arguments);
     };
     window.gtag("js", new Date());
     window.gtag("config", measurementId, { send_page_view: false });
