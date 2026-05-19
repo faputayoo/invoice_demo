@@ -70,7 +70,7 @@ export default async function ResultPage({
         </div>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+      <section className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.65fr)_minmax(18rem,0.75fr)]">
         <div className="surface-card overflow-hidden rounded-[2rem] p-6">
           <div className="flex items-center justify-between gap-3">
             <div>
@@ -82,8 +82,23 @@ export default async function ResultPage({
             </span>
           </div>
 
-          <div className="mt-6 overflow-x-auto">
-            <table className="min-w-full border-separate border-spacing-0 text-left text-sm">
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-[var(--muted)]">
+            <p>桌面端已加宽主表格；小屏幕可左右滑动查看更多列。</p>
+            <p className="number-tabular">共 {job.records.length} 条记录</p>
+          </div>
+
+          <div className="mt-6 overflow-x-auto pb-2">
+            <table className="w-max min-w-[1120px] border-separate border-spacing-0 text-left text-sm">
+              <colgroup>
+                <col className="w-[10rem]" />
+                <col className="w-[9rem]" />
+                <col className="w-[8rem]" />
+                <col className="w-[14rem]" />
+                <col className="w-[14rem]" />
+                <col className="w-[8rem]" />
+                <col className="w-[16rem]" />
+                <col className="w-[16rem]" />
+              </colgroup>
               <thead>
                 <tr className="text-[var(--muted)]">
                   {[
@@ -94,9 +109,12 @@ export default async function ResultPage({
                     "购买方",
                     "价税合计",
                     "备注或项目",
-                    "标签",
+                    "状态与提示",
                   ].map((title) => (
-                    <th key={title} className="border-b border-black/10 px-4 py-3 font-medium">
+                    <th
+                      key={title}
+                      className="border-b border-black/10 px-4 py-3 font-medium whitespace-nowrap"
+                    >
                       {title}
                     </th>
                   ))}
@@ -105,25 +123,25 @@ export default async function ResultPage({
               <tbody>
                 {job.records.map((record) => (
                   <tr key={record.id} className="align-top text-[var(--foreground)]">
-                    <td className="border-b border-black/6 px-4 py-4">{record.invoiceType || "-"}</td>
-                    <td className="border-b border-black/6 px-4 py-4 number-tabular">
+                    <td className="border-b border-black/6 px-4 py-4 leading-7">{record.invoiceType || "-"}</td>
+                    <td className="border-b border-black/6 px-4 py-4 number-tabular whitespace-nowrap">
                       {record.invoiceNumber || "-"}
                     </td>
-                    <td className="border-b border-black/6 px-4 py-4 number-tabular">
+                    <td className="border-b border-black/6 px-4 py-4 number-tabular whitespace-nowrap">
                       {record.invoiceDate || "-"}
                     </td>
-                    <td className="border-b border-black/6 px-4 py-4">{record.sellerName || "-"}</td>
-                    <td className="border-b border-black/6 px-4 py-4">{record.buyerName || "-"}</td>
-                    <td className="border-b border-black/6 px-4 py-4 number-tabular">
+                    <td className="border-b border-black/6 px-4 py-4 leading-7">{record.sellerName || "-"}</td>
+                    <td className="border-b border-black/6 px-4 py-4 leading-7">{record.buyerName || "-"}</td>
+                    <td className="border-b border-black/6 px-4 py-4 number-tabular whitespace-nowrap">
                       {record.amountIncludingTax === null
                         ? "-"
                         : currencyFormatter.format(record.amountIncludingTax)}
                     </td>
-                    <td className="border-b border-black/6 px-4 py-4">{record.remarkOrItem || "-"}</td>
+                    <td className="border-b border-black/6 px-4 py-4 leading-7">{record.remarkOrItem || "-"}</td>
                     <td className="border-b border-black/6 px-4 py-4">
                       <div className="flex flex-wrap gap-2">
                         <span
-                          className={`rounded-full px-3 py-1 text-xs font-medium ${
+                          className={`inline-flex whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium ${
                             record.statusLabel === "识别成功"
                               ? "bg-[var(--teal-soft)] text-[var(--teal)]"
                               : "bg-[var(--warm-soft)] text-[var(--accent-strong)]"
@@ -132,15 +150,22 @@ export default async function ResultPage({
                           {record.statusLabel}
                         </span>
                         {record.duplicate ? (
-                          <span className="rounded-full bg-[var(--warm-soft)] px-3 py-1 text-xs font-medium text-[var(--accent-strong)]">
+                          <span className="inline-flex whitespace-nowrap rounded-full bg-[var(--warm-soft)] px-3 py-1 text-xs font-medium text-[var(--accent-strong)]">
                             疑似重复
                           </span>
                         ) : null}
                       </div>
                       {record.notes.length > 0 ? (
-                        <p className="mt-2 max-w-xs text-xs leading-6 text-[var(--muted)]">
-                          {record.notes.join("；")}
-                        </p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {record.notes.map((note) => (
+                            <span
+                              key={`${record.id}-${note}`}
+                              className="inline-flex rounded-full border border-black/10 bg-white/80 px-3 py-1 text-xs leading-6 text-[var(--muted)]"
+                            >
+                              {note}
+                            </span>
+                          ))}
+                        </div>
                       ) : null}
                     </td>
                   </tr>
