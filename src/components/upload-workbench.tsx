@@ -240,7 +240,7 @@ export function UploadWorkbench({
           <p className="eyebrow">上传文件</p>
           <h2 className="mt-3 text-3xl">把电子发票整理成一张清晰台账。</h2>
           <p className="mx-auto mt-4 max-w-xl text-base leading-8 text-[var(--muted)]">
-            系统会优先解析文本型电子发票 PDF；图片版 PDF 会自动启用 OCR 识别。支持拖拽上传，单批最多 {MAX_FILES_PER_BATCH} 张。
+            支持上传数电票、普通电子发票、部分酒店报销凭证，以及清晰的图片版 PDF。支持拖拽上传，单批最多 {MAX_FILES_PER_BATCH} 张。
           </p>
 
           <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
@@ -381,9 +381,9 @@ export function UploadWorkbench({
         <section className="surface-card rounded-[2rem] p-6">
           <p className="eyebrow">处理范围</p>
           <ul className="mt-4 space-y-3 text-sm leading-7 text-[var(--muted)]">
-            <li>支持标准电子发票 PDF，也支持图片版 PDF 的 OCR 识别。</li>
-            <li>优先走规则提取，只在文本层不足时才启用 OCR。</li>
-            <li>处理记录会自动保存在当前配置的存储中，方便回看与导出。</li>
+            <li>支持数电票、普通电子发票、部分酒店报销凭证，以及清晰的图片版 PDF。</li>
+            <li>不支持 JPG、PNG、手写票据、海外 invoice 和自定义模板。</li>
+            <li>优先走规则提取，只在文本层不足时才启用 OCR；处理记录会自动保存，方便回看与导出。</li>
           </ul>
         </section>
       </aside>
