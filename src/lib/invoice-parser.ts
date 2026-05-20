@@ -15,6 +15,7 @@ const RECORD_END_PATTERN =
   /备注|项目名称|货物或应税劳务、服务名称|收款人|复核|开票人|remark|item(?: name)?|$/i;
 const OCR_NOTE = "通过 OCR 补救识别";
 const HOTEL_VOUCHER_TYPE = "酒店报销凭证";
+const DECIMAL_AMOUNT_PATTERN = "[0-9][0-9,]*\\.[0-9]{2}";
 
 const REQUIRED_FIELDS: Array<keyof Pick<
   InvoiceRecord,
@@ -33,7 +34,7 @@ const REQUIRED_FIELDS: Array<keyof Pick<
   "amountIncludingTax",
 ];
 
-const CURRENCY_PATTERN = "([0-9][0-9,]*\\.[0-9]{2})";
+const CURRENCY_PATTERN = `(${DECIMAL_AMOUNT_PATTERN})`;
 const FIELD_LABELS: Record<string, string> = {
   invoiceType: "发票类型",
   invoiceNumber: "发票号码",
@@ -287,6 +288,20 @@ function extractInvoiceRecord(fileName: string, text: string): InvoiceRecord {
       /(?:guest|traveler|booker)\s+name[：:\s]*([^\n]+)/i,
     ]) ??
     "";
+  const inferredLineItemAmounts = inferLineItemAmounts(text);
+  const taxAmount =
+    findAmount(text, [
+      new RegExp(`税额(?:合计)?[：:\s]*[¥￥]?${CURRENCY_PATTERN}`),
+      /税额[：:\s]*(免税|不征税)/,
+      new RegExp(`tax(?: amount)?[：:\s]*[$¥￥]?${CURRENCY_PATTERN}`, "i"),
+    ]) ?? inferredLineItemAmounts.taxAmount;
+  const amountExcludingTax =
+    findAmount(text, [
+      new RegExp(`金额合计[：:\s]*[¥￥]?${CURRENCY_PATTERN}`),
+      new RegExp(`合计金额[：:\s]*[¥￥]?${CURRENCY_PATTERN}`),
+      new RegExp(`(?:subtotal|amount|net amount)[：:\s]*[$¥￥]?${CURRENCY_PATTERN}`, "i"),
+    ]) ??
+    inferredLineItemAmounts.amountExcludingTax;
   const amountIncludingTax =
     findAmount(text, [
       new RegExp(`价税合计(?:\\(小写\\))?[：:\\s]*[¥￥]?${CURRENCY_PATTERN}`),
@@ -294,20 +309,13 @@ function extractInvoiceRecord(fileName: string, text: string): InvoiceRecord {
       new RegExp(`(?:支付金额|实付金额|订单金额|订单总额|总金额|含税金额)[：:\\s]*[¥￥]?${CURRENCY_PATTERN}`),
       new RegExp(`(?:total amount|grand total|total)[：:\\s]*[$¥￥]?${CURRENCY_PATTERN}`, "i"),
       new RegExp(`(?:paid amount|amount paid|total paid)[：:\\s]*[$¥￥]?${CURRENCY_PATTERN}`, "i"),
-    ]) ?? null;
-  const taxAmount =
-    findAmount(text, [
-      new RegExp(`税额(?:合计)?[：:\\s]*[¥￥]?${CURRENCY_PATTERN}`),
-      /税额[：:\s]*(免税|不征税)/,
-      new RegExp(`tax(?: amount)?[：:\\s]*[$¥￥]?${CURRENCY_PATTERN}`, "i"),
-    ]) ?? inferTaxAmount(text, amountIncludingTax);
-  const amountExcludingTax =
-    findAmount(text, [
-      new RegExp(`金额合计[：:\\s]*[¥￥]?${CURRENCY_PATTERN}`),
-      new RegExp(`合计金额[：:\\s]*[¥￥]?${CURRENCY_PATTERN}`),
-      new RegExp(`(?:subtotal|amount|net amount)[：:\\s]*[$¥￥]?${CURRENCY_PATTERN}`, "i"),
     ]) ??
-    inferAmountWithoutTax(amountIncludingTax, taxAmount) ??
+    inferAmountIncludingTax(amountExcludingTax, taxAmount) ??
+    null;
+  const finalizedTaxAmount = taxAmount ?? inferTaxAmount(text, amountIncludingTax);
+  const finalizedAmountExcludingTax =
+    amountExcludingTax ??
+    inferAmountWithoutTax(amountIncludingTax, finalizedTaxAmount) ??
     (isHotelVoucher ? amountIncludingTax : null);
   const remark =
     findFirst(text, [
@@ -347,8 +355,8 @@ function extractInvoiceRecord(fileName: string, text: string): InvoiceRecord {
     invoiceDate,
     sellerName: cleanInlineValue(sellerName),
     buyerName: cleanInlineValue(buyerName),
-    amountExcludingTax,
-    taxAmount,
+    amountExcludingTax: finalizedAmountExcludingTax,
+    taxAmount: finalizedTaxAmount,
     amountIncludingTax,
     remarkOrItem: cleanInlineValue(remark),
     checkCodeLast6: checkCode,
@@ -474,6 +482,47 @@ function inferAmountWithoutTax(
   }
 
   return roundAmount(amountIncludingTax - taxAmount);
+}
+
+function inferAmountIncludingTax(
+  amountExcludingTax: number | null,
+  taxAmount: number | null,
+): number | null {
+  if (amountExcludingTax === null || taxAmount === null) {
+    return null;
+  }
+
+  return roundAmount(amountExcludingTax + taxAmount);
+}
+
+function inferLineItemAmounts(text: string): {
+  amountExcludingTax: number | null;
+  taxAmount: number | null;
+} {
+  const match = text.match(
+    new RegExp(
+      String.raw`(?:金额\s*税率\/?征收率\s*税额|金额\s*税率\s*税额|金额\s*征收率\s*税额)[\s\S]{0,120}?(${DECIMAL_AMOUNT_PATTERN})[\s\S]{0,20}?(?:[0-9]{1,2}(?:\.[0-9]+)?%|免税|不征税)[\s\S]{0,20}?(免税|不征税|${DECIMAL_AMOUNT_PATTERN})`,
+    ),
+  );
+
+  if (!match?.[1]) {
+    return {
+      amountExcludingTax: null,
+      taxAmount: null,
+    };
+  }
+
+  const amountExcludingTax = Number(match[1].replace(/,/g, ""));
+  const rawTaxAmount = match[2];
+  const taxAmount =
+    rawTaxAmount === "免税" || rawTaxAmount === "不征税"
+      ? 0
+      : Number(rawTaxAmount.replace(/,/g, ""));
+
+  return {
+    amountExcludingTax: Number.isNaN(amountExcludingTax) ? null : roundAmount(amountExcludingTax),
+    taxAmount: Number.isNaN(taxAmount) ? null : roundAmount(taxAmount),
+  };
 }
 
 function buildNotes(record: InvoiceRecord, text: string): string[] {
