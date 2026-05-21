@@ -499,21 +499,32 @@ function inferLineItemAmounts(text: string): {
   amountExcludingTax: number | null;
   taxAmount: number | null;
 } {
-  const match = text.match(
+  const sectionMatch = text.match(
     new RegExp(
-      String.raw`(?:金额\s*税率\/?征收率\s*税额|金额\s*税率\s*税额|金额\s*征收率\s*税额)[\s\S]{0,120}?(${DECIMAL_AMOUNT_PATTERN})[\s\S]{0,20}?(?:[0-9]{1,2}(?:\.[0-9]+)?%|免税|不征税)[\s\S]{0,20}?(免税|不征税|${DECIMAL_AMOUNT_PATTERN})`,
+      String.raw`(?:金额\s*税率\/?征收率\s*税额|金额\s*税率\s*税额|金额\s*征收率\s*税额)([\s\S]{0,180}?)([0-9]{1,2}(?:\.[0-9]+)?%|免税|不征税)([\s\S]{0,40})`,
     ),
   );
 
-  if (!match?.[1]) {
+  if (!sectionMatch?.[1]) {
     return {
       amountExcludingTax: null,
       taxAmount: null,
     };
   }
 
-  const amountExcludingTax = Number(match[1].replace(/,/g, ""));
-  const rawTaxAmount = match[2];
+  const amountCandidates = sectionMatch[1].match(new RegExp(DECIMAL_AMOUNT_PATTERN, "g")) ?? [];
+  const rawAmountExcludingTax = amountCandidates.at(-1) ?? null;
+  const rawTaxAmount =
+    sectionMatch[3].match(new RegExp(`免税|不征税|${DECIMAL_AMOUNT_PATTERN}`))?.[0] ?? null;
+
+  if (!rawAmountExcludingTax || !rawTaxAmount) {
+    return {
+      amountExcludingTax: null,
+      taxAmount: null,
+    };
+  }
+
+  const amountExcludingTax = Number(rawAmountExcludingTax.replace(/,/g, ""));
   const taxAmount =
     rawTaxAmount === "免税" || rawTaxAmount === "不征税"
       ? 0
